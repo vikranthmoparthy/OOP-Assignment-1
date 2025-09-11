@@ -1,0 +1,35 @@
+import numpy as np
+from collections import Counter
+
+class KNN():
+
+    def __init__(self, k: int=3) -> None:
+        self._k = k
+        self._parameters = {}
+
+    def fit(self, observations: np.ndarray, labels: np.ndarray) -> None:
+        self._parameters["observations"] = observations
+        self._parameters["labels"] = labels
+
+    def predict(self, data: np.ndarray) -> np.ndarray:
+        pred =[self._predict_single(x) for x in data]
+        return np.array(pred)
+
+    def _predict_single(self, x: np.ndarray) -> int:
+        distances = np.linalg.norm(self._parameters["observations"] - x, axis=1)
+        nn_indices = np.argsort(distances)
+        nn_labels = self._parameters["labels"][nn_indices]
+
+        most_common = Counter(nn_labels).most_common(1)
+        return most_common[0][0]
+
+    
+
+model = KNN()
+
+data, labels, apples, oranges = generate_true_data(50)
+new_fruit = generate_obs_data(10)
+
+model.fit(data, labels)
+pred = model.predict(new_fruit)
+plot_fruits(apples, oranges, new_fruit, pred)
