@@ -1,1 +1,68 @@
+import numpy as np
+from typing import Dict
+
+
+class MultipleLinearRegression:
+    """
+    Multiple Linear Regression model using the closed-form solution.
+    """
+
+    def __init__(self) -> None:
+        """
+        Initializes the model without training data.
+        """
+        self._parameters: Dict[str, np.ndarray] | None = None
+
+    def fit(self, observations: np.ndarray, ground_truth: np.ndarray) -> None:
+        """
+        Fits the regression model using the closed-form solution.
+
+        Args:
+            observations (np.ndarray): Input data of shape (n_samples, n_features).
+            ground_truth (np.ndarray): Ground truth values of shape (n_samples,).
+        """
+        # Ensure column vector for y
+        y = ground_truth.reshape(-1, 1)
+
+        # Add column of 1s for intercept
+        ones = np.ones((observations.shape[0], 1))
+        X_tilde = np.hstack([observations, ones])
+
+        # Closed-form solution: (X^T X)^-1 X^T y
+        w_tilde = np.linalg.inv(X_tilde.T @ X_tilde) @ X_tilde.T @ y
+
+        # Store parameters in dict
+        self._parameters = {"weights": w_tilde}
+
+    @property
+    def parameters(self) -> Dict[str, np.ndarray]:
+        """
+        Returns a read-only copy of the learned parameters.
+
+        Returns:
+            dict: Dictionary with key "weights" and value as np.ndarray.
+        """
+        if self._parameters is None:
+            raise ValueError("Model has not been fitted yet.")
+        return self._parameters.copy()
+
+    def predict(self, new_data: np.ndarray) -> np.ndarray:
+        """
+        Predicts output for new input data.
+
+        Args:
+            new_data (np.ndarray): Input data of shape (n_samples, n_features).
+
+        Returns:
+            np.ndarray: Predicted values of shape (n_samples,).
+        """
+        if self._parameters is None:
+            raise ValueError("Model must be fitted before predicting.")
+
+        # Add column of 1s for intercept
+        ones = np.ones((new_data.shape[0], 1))
+        X_tilde = np.hstack([new_data, ones])
+
+        w_tilde = self._parameters["weights"]
+        return (X_tilde @ w_tilde).flatten()
 
