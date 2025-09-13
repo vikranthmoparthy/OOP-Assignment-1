@@ -1,13 +1,12 @@
-# models/sklearn_wrap.py
-
 import numpy as np
 from sklearn.linear_model import Lasso
 
+
 class LassoWrapper:
     """
-    Wrapper for scikit-learn's Lasso model, providing train and predict methods
-    with the same interface as your other models. All constructor arguments use defaults.
-    Stores parameters in a dictionary matching the scikit-learn keys.
+    Wrapper for scikit-learn's Lasso model, providing train and predict methods.
+    All constructor arguments use defaults.
+    Stores parameters in a dictionary.
     """
 
     def __init__(self):
@@ -27,8 +26,8 @@ class LassoWrapper:
         """
         self._model.fit(X, y)
         self._parameters = {
-            "coef_": np.copy(self._model.coef_),
-            "intercept_": float(self._model.intercept_)
+            "coef": np.copy(self._model.coef_),
+            "intercept": float(self._model.intercept_)
         }
 
     @property
@@ -37,7 +36,7 @@ class LassoWrapper:
         Returns a copy of the model parameters.
 
         Returns:
-            dict: Dictionary with keys 'coef_' and 'intercept_'
+            dict: Dictionary with keys 'coef' and 'intercept'
         """
         return self._parameters.copy()
 
