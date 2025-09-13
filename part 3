@@ -1,0 +1,54 @@
+# models/sklearn_wrap.py
+
+import numpy as np
+from sklearn.linear_model import Lasso
+
+class LassoWrapper:
+    """
+    Wrapper for scikit-learn's Lasso model, providing train and predict methods
+    with the same interface as your other models. All constructor arguments use defaults.
+    Stores parameters in a dictionary matching the scikit-learn keys.
+    """
+
+    def __init__(self):
+        """
+        Initialize the Lasso model with default parameters.
+        """
+        self._model = Lasso()
+        self._parameters = {}
+
+    def fit(self, X, y):
+        """
+        Fit the Lasso model to training data.
+
+        Parameters:
+            X (np.ndarray): Input features of shape (n_samples, n_features)
+            y (np.ndarray): Target values of shape (n_samples,)
+        """
+        self._model.fit(X, y)
+        self._parameters = {
+            "coef_": np.copy(self._model.coef_),
+            "intercept_": float(self._model.intercept_)
+        }
+
+    @property
+    def parameters(self):
+        """
+        Returns a copy of the model parameters.
+
+        Returns:
+            dict: Dictionary with keys 'coef_' and 'intercept_'
+        """
+        return self._parameters.copy()
+
+    def predict(self, X):
+        """
+        Predict using the trained Lasso model.
+
+        Parameters:
+            X (np.ndarray): Input features of shape (n_samples, n_features)
+
+        Returns:
+            np.ndarray: Predicted values, shape (n_samples,)
+        """
+        return self._model.predict(X)
