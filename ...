@@ -1,6 +1,7 @@
 import numpy as np
 from copy import deepcopy
 
+
 class MultipleLinearRegression:
     """
     Implements multiple linear regression using ordinary least squares.
@@ -8,14 +9,14 @@ class MultipleLinearRegression:
 
     def __init__(self) -> None:
         """
-        Initializes the regression model. Parameters are set after calling fit().
+        Initializes regression model. Parameters are set after calling fit().
         """
         self._parameters: dict[str, np.ndarray] = {}
 
     @property
     def parameters(self) -> dict[str, np.ndarray]:
         """
-        Returns a deep copy of the learned parameters to prevent external modification.
+        Returns the learned parameters to prevent external modification.
         """
         return deepcopy(self._parameters)
 
