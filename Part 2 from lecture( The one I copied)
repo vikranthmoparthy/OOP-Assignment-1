@@ -1,35 +1,69 @@
 import numpy as np
 from collections import Counter
 
-class KNN():
-
+class K_Nearest_Neighbors:
+    """
+    Implements the K-Nearest Neighbors classifier.
+    """
     def __init__(self, k: int=3) -> None:
+        """
+        Initializes the KNN classifier with the specified number of neighbors.
+
+        Args:
+            k (int, optional): Number of nearest neighbors for voting. Defaults to 3.
+        """
         self._k = k
         self._parameters = {}
 
     def fit(self, observations: np.ndarray, labels: np.ndarray) -> None:
+        """
+        Fits the KNN model to the provided training data.
+
+        Args:
+            observations (np.ndarray): The feature matrix of training data, where each row represents an observation.
+            labels (np.ndarray): The corresponding labels for each observation.
+        """
         self._parameters["observations"] = observations
         self._parameters["labels"] = labels
 
     def predict(self, data: np.ndarray) -> np.ndarray:
+        """
+        Predicts the class labels for the given data using the trained k-NN model.
+        Args:
+            data (np.ndarray): A 2D numpy array where each row represents data to classify.
+        Returns:
+            np.ndarray: An array of predicted class labels for each observation.
+        """
         pred =[self._predict_single(x) for x in data]
         return np.array(pred)
 
     def _predict_single(self, x: np.ndarray) -> int:
+        """
+        Predicts the label for a single input sample using the k-nearest neighbors algorithm.
+        Args:
+            x (np.ndarray): The input sample for which to predict the label. Should be a 1D numpy array representing feature values.
+        Returns:
+            int: The predicted label for the input sample, determined by majority vote among the k nearest neighbors.
+        """
         distances = np.linalg.norm(self._parameters["observations"] - x, axis=1)
-        nn_indices = np.argsort(distances)
+        nn_indices = np.argsort(distances)[:self._k]
         nn_labels = self._parameters["labels"][nn_indices]
 
         most_common = Counter(nn_labels).most_common(1)
         return most_common[0][0]
 
+    @property
+    def observations(self) -> np.ndarray:
+        """
+        Returns a copy of the training observations to prevent external modification.
+        """
+        return self._parameters["observations"].copy()
+
+    @property
+    def labels(self) -> np.ndarray:
+        """
+        Returns a copy of the training labels to prevent external modification.
+        """
+        return self._parameters["labels"].copy()
     
 
-model = KNN()
-
-data, labels, apples, oranges = generate_true_data(50)
-new_fruit = generate_obs_data(10)
-
-model.fit(data, labels)
-pred = model.predict(new_fruit)
-plot_fruits(apples, oranges, new_fruit, pred)
